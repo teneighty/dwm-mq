@@ -1,0 +1,43 @@
+# HG changeset patch
+# Parent aadf29ced0bf305189c4c2a762c61c7653c05dc3
+
+diff -r aadf29ced0bf dwm.c
+--- a/dwm.c	Mon Nov 28 15:30:28 2011 -0800
++++ b/dwm.c	Mon Nov 28 15:30:53 2011 -0800
+@@ -163,6 +163,7 @@
+ static void arrange(Monitor *m);
+ static void arrangemon(Monitor *m);
+ static void attach(Client *c);
++static void attachabove(Client *c);
+ static void attachstack(Client *c);
+ static void buttonpress(XEvent *e);
+ static Bool checkdock(Window *w);
+@@ -420,6 +421,19 @@
+ }
+ 
+ void
++attachabove(Client *c) {
++	if(c->mon->sel == NULL || c->mon->sel == c->mon->clients || c->mon->sel->isfloating) {
++		attach(c);
++		return;
++	}
++
++	Client *at;
++	for (at = c->mon->clients; at->next != c->mon->sel; at = at->next);
++	c->next = at->next;
++	at->next = c;
++}
++
++void
+ attachstack(Client *c) {
+ 	c->snext = c->mon->stack;
+ 	c->mon->stack = c;
+@@ -1246,7 +1260,7 @@
+ 		c->isfloating = c->oldstate = trans != None || c->isfixed;
+ 	if(c->isfloating)
+ 		XRaiseWindow(dpy, c->win);
+-	attach(c);
++	attachabove(c);
+ 	attachstack(c);
+ 	XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
+ 	XMapWindow(dpy, c->win);
