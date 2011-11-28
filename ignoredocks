@@ -1,0 +1,147 @@
+# HG changeset patch
+# Parent dd74622a4785e55658b05b36834fa0c41084a8c1
+
+diff -r dd74622a4785 dwm.c
+--- a/dwm.c	Sun Jul 10 21:24:17 2011 +0100
++++ b/dwm.c	Mon Nov 28 15:27:43 2011 -0800
+@@ -58,6 +58,7 @@
+ enum { CurNormal, CurResize, CurMove, CurLast };        /* cursor */
+ enum { ColBorder, ColFG, ColBG, ColLast };              /* color */
+ enum { NetSupported, NetWMName, NetWMState,
++       NetWMTypeDock, NetWMType, NetWMStrutPartial,
+        NetWMFullscreen, NetActiveWindow, NetLast };     /* EWMH atoms */
+ enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
+ enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
+@@ -159,6 +160,7 @@
+ static void attach(Client *c);
+ static void attachstack(Client *c);
+ static void buttonpress(XEvent *e);
++static Bool checkdock(Window *w);
+ static void checkotherwm(void);
+ static void cleanup(void);
+ static void cleanupmon(Monitor *mon);
+@@ -190,6 +192,7 @@
+ static void grabbuttons(Client *c, Bool focused);
+ static void grabkeys(void);
+ static void initfont(const char *fontstr);
++static void ignoredock(Window *w);
+ static void keypress(XEvent *e);
+ static void killclient(const Arg *arg);
+ static void manage(Window w, XWindowAttributes *wa);
+@@ -249,6 +252,7 @@
+ static const char broken[] = "broken";
+ static char stext[256];
+ static int screen;
++static int gapy = 0;
+ static int sw, sh;           /* X display screen geometry width, height */
+ static int bh, blw = 0;      /* bar geometry */
+ static int (*xerrorxlib)(Display *, XErrorEvent *);
+@@ -457,6 +461,22 @@
+ 			buttons[i].func(click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
+ }
+ 
++Bool 
++checkdock(Window *w) {
++	int format;
++	unsigned char *p = NULL;
++	unsigned long n, extra;
++	Atom real, result = None;
++
++	if(XGetWindowProperty(dpy, *w, netatom[NetWMType], 0L, 0xffffffff, False, AnyPropertyType,
++	                      &real, &format, &n, &extra, &p) == Success) {
++        if (n != 0)
++            result = * (Atom *) p;
++    }
++    XFree(p);
++	return result == netatom[NetWMTypeDock] ? True : False;
++}
++
+ void
+ checkotherwm(void) {
+ 	xerrorxlib = XSetErrorHandler(xerrorstart);
+@@ -1053,6 +1073,53 @@
+ 	dc.font.height = dc.font.ascent + dc.font.descent;
+ }
+ 
++void 
++ignoredock(Window *w) {
++
++	XWindowChanges wc;
++    Client c;
++
++	int format;
++	unsigned char *p = NULL;
++	unsigned long n, extra;
++	Atom real = None;
++    long *result;
++
++	if(XGetWindowProperty(dpy, *w, netatom[NetWMStrutPartial], 0L, 0xffffffff, False, AnyPropertyType,
++	                      &real, &format, &n, &extra, &p) == Success) {
++        if (n != 0) {
++            result = (long *) p;
++            wc.x = result[0];
++            wc.y = result[1];
++            wc.height = result[2];
++            wc.width = result[9];
++
++            /* gap at the top */
++            if (wc.y == 0) {
++                gapy = wc.height;
++            }
++        }
++    }
++    XFree(p);
++
++    c.win = *w;
++	wc.border_width = 0;
++
++	XConfigureWindow(dpy, *w, CWBorderWidth, &wc);
++	XSetWindowBorder(dpy, *w, dc.norm[ColBorder]);
++
++	updatesizehints(&c);
++	updatewmhints(&c);
++    XRaiseWindow(dpy, c.win);
++	XMoveWindow(dpy, c.win, 0, 0);
++	XMapWindow(dpy, c.win);
++	setclientstate(&c, NormalState);
++
++	updatebarpos(selmon);
++    restack(selmon);
++	// arrange(selmon);
++}
++
+ #ifdef XINERAMA
+ static Bool
+ isuniquegeom(XineramaScreenInfo *unique, size_t n, XineramaScreenInfo *info) {
+@@ -1100,6 +1167,11 @@
+ 	Window trans = None;
+ 	XWindowChanges wc;
+ 
++    if (checkdock(&w)) {
++        ignoredock(&w);
++        return;
++    }
++
+ 	if(!(c = calloc(1, sizeof(Client))))
+ 		die("fatal: could not malloc() %u bytes\n", sizeof(Client));
+ 	c->win = w;
+@@ -1545,6 +1617,9 @@
+ 	netatom[NetWMName] = XInternAtom(dpy, "_NET_WM_NAME", False);
+ 	netatom[NetWMState] = XInternAtom(dpy, "_NET_WM_STATE", False);
+ 	netatom[NetWMFullscreen] = XInternAtom(dpy, "_NET_WM_STATE_FULLSCREEN", False);
++	netatom[NetWMTypeDock] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False);
++	netatom[NetWMType] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
++	netatom[NetWMStrutPartial] = XInternAtom(dpy, "_NET_WM_STRUT_PARTIAL", False);
+ 	/* init cursors */
+ 	cursor[CurNormal] = XCreateFontCursor(dpy, XC_left_ptr);
+ 	cursor[CurResize] = XCreateFontCursor(dpy, XC_sizing);
+@@ -1773,6 +1848,9 @@
+ 
+ void
+ updatebarpos(Monitor *m) {
++    m->my = gapy;
++    m->mh = sh - gapy;
++
+ 	m->wy = m->my;
+ 	m->wh = m->mh;
+ 	if(m->showbar) {
