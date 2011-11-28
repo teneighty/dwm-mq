@@ -3,7 +3,7 @@
 
 diff -r ae07bbc39acb config.mk
 --- a/config.mk	Mon Nov 28 15:33:27 2011 -0800
-+++ b/config.mk	Mon Nov 28 15:35:21 2011 -0800
++++ b/config.mk	Mon Nov 28 15:35:39 2011 -0800
 @@ -4,7 +4,7 @@
  # Customize below to fit your system
  
