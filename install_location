@@ -1,0 +1,15 @@
+# HG changeset patch
+# Parent ae07bbc39acbd7d4f62c4cfc2cf6dcfa6cef7ed2
+
+diff -r ae07bbc39acb config.mk
+--- a/config.mk	Mon Nov 28 15:33:27 2011 -0800
++++ b/config.mk	Mon Nov 28 15:34:44 2011 -0800
+@@ -4,7 +4,7 @@
+ # Customize below to fit your system
+ 
+ # paths
+-PREFIX = /usr/local
++PREFIX = /home/thorton/local/src/dwm
+ MANPREFIX = ${PREFIX}/share/man
+ 
+ X11INC = /usr/X11R6/include
