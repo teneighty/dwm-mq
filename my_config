@@ -1,9 +1,9 @@
 # HG changeset patch
-# Parent 50059a53790df26e4f3b3dedfec5fbfb465e6f5d
+# Parent 8e5bbfd95088154ad2ba05d6b541ef5fadb6482a
 
-diff -r 50059a53790d config.def.h
---- a/config.def.h	Mon Nov 28 15:31:34 2011 -0800
-+++ b/config.def.h	Mon Nov 28 15:33:27 2011 -0800
+diff -r 8e5bbfd95088 config.def.h
+--- a/config.def.h	Mon Nov 28 15:38:56 2011 -0800
++++ b/config.def.h	Mon Nov 28 15:40:13 2011 -0800
 @@ -2,39 +2,56 @@
  
  /* appearance */
@@ -134,9 +134,27 @@ diff -r 50059a53790d config.def.h
  };
  
  /* button definitions */
-diff -r 50059a53790d includes/cycle.c
+diff -r 8e5bbfd95088 config.mk
+--- a/config.mk	Mon Nov 28 15:38:56 2011 -0800
++++ b/config.mk	Mon Nov 28 15:40:13 2011 -0800
+@@ -21,10 +21,13 @@
+ # flags
+ CPPFLAGS = -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
+ #CFLAGS = -g -std=c99 -pedantic -Wall -O0 ${INCS} ${CPPFLAGS}
+-CFLAGS = -std=c99 -pedantic -Wall -Os ${INCS} ${CPPFLAGS}
++CFLAGS = -std=c99 -pedantic -Wall -Wno-unused-function -Os ${INCS} ${CPPFLAGS}
+ #LDFLAGS = -g ${LIBS}
+ LDFLAGS = -s ${LIBS}
+ 
++CFLAGS += $(shell pkg-config --cflags dbus-1)
++LDFLAGS += $(shell pkg-config --libs dbus-1)
++
+ # Solaris
+ #CFLAGS = -fast ${INCS} -DVERSION=\"${VERSION}\"
+ #LDFLAGS = ${LIBS}
+diff -r 8e5bbfd95088 includes/cycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/cycle.c	Mon Nov 28 15:33:27 2011 -0800
++++ b/includes/cycle.c	Mon Nov 28 15:40:13 2011 -0800
 @@ -0,0 +1,42 @@
 +
 +static int
@@ -180,9 +198,9 @@ diff -r 50059a53790d includes/cycle.c
 +
 +
 +
-diff -r 50059a53790d includes/dwm-applet.c
+diff -r 8e5bbfd95088 includes/dwm-applet.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/dwm-applet.c	Mon Nov 28 15:33:27 2011 -0800
++++ b/includes/dwm-applet.c	Mon Nov 28 15:40:13 2011 -0800
 @@ -0,0 +1,166 @@
 +
 +#include <dbus/dbus.h>
@@ -350,9 +368,9 @@ diff -r 50059a53790d includes/dwm-applet.c
 +    dbus_connection_unref(conn);
 +}
 +
-diff -r 50059a53790d includes/gaplessgrid.c
+diff -r 8e5bbfd95088 includes/gaplessgrid.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/gaplessgrid.c	Mon Nov 28 15:33:27 2011 -0800
++++ b/includes/gaplessgrid.c	Mon Nov 28 15:40:13 2011 -0800
 @@ -0,0 +1,36 @@
 +void
 +gaplessgrid(Monitor *m) {
@@ -390,9 +408,9 @@ diff -r 50059a53790d includes/gaplessgrid.c
 +		}
 +	}
 +}
-diff -r 50059a53790d includes/layoutcycle.c
+diff -r 8e5bbfd95088 includes/layoutcycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/layoutcycle.c	Mon Nov 28 15:33:27 2011 -0800
++++ b/includes/layoutcycle.c	Mon Nov 28 15:40:13 2011 -0800
 @@ -0,0 +1,19 @@
 +
 +static void
@@ -413,9 +431,9 @@ diff -r 50059a53790d includes/layoutcycle.c
 +    const Arg a = { .v = &layouts[lt] };
 +    setlayout(&a);
 +}
-diff -r 50059a53790d includes/push.c
+diff -r 8e5bbfd95088 includes/push.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/push.c	Mon Nov 28 15:33:27 2011 -0800
++++ b/includes/push.c	Mon Nov 28 15:40:13 2011 -0800
 @@ -0,0 +1,58 @@
 +static Client *
 +prevtiled(Client *c) {
@@ -475,9 +493,9 @@ diff -r 50059a53790d includes/push.c
 +	focus(sel);
 +	arrange(selmon);
 +}
-diff -r 50059a53790d includes/smartborders.c
+diff -r 8e5bbfd95088 includes/smartborders.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/smartborders.c	Mon Nov 28 15:33:27 2011 -0800
++++ b/includes/smartborders.c	Mon Nov 28 15:40:13 2011 -0800
 @@ -0,0 +1,30 @@
 +
 +
