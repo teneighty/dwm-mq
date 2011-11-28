@@ -1,0 +1,511 @@
+# HG changeset patch
+# Parent 50059a53790df26e4f3b3dedfec5fbfb465e6f5d
+
+diff -r 50059a53790d config.def.h
+--- a/config.def.h	Mon Nov 28 15:31:34 2011 -0800
++++ b/config.def.h	Mon Nov 28 15:33:27 2011 -0800
+@@ -2,39 +2,56 @@
+ 
+ /* appearance */
+ static const char font[]            = "-*-terminus-medium-r-*-*-16-*-*-*-*-*-*-*";
+-static const char normbordercolor[] = "#cccccc";
++static const char normbordercolor[] = "#333333";
+ static const char normbgcolor[]     = "#cccccc";
+ static const char normfgcolor[]     = "#000000";
+-static const char selbordercolor[]  = "#0066ff";
+-static const char selbgcolor[]      = "#0066ff";
+-static const char selfgcolor[]      = "#ffffff";
++static const char selbordercolor[]  = "#999999";
++static const char selbgcolor[]      = "#000000";
++static const char selfgcolor[]      = "#000000";
+ static const unsigned int borderpx  = 1;        /* border pixel of windows */
+ static const unsigned int snap      = 32;       /* snap pixel */
+-static const Bool showbar           = True;     /* False means no bar */
+-static const Bool topbar            = True;     /* False means bottom bar */
++static const Bool showbar           = False;     /* False means no bar */
++static const Bool topbar            = False;     /* False means bottom bar */
+ 
+ /* tagging */
+-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
++static const char *tags[] = { "home", "web", "dev", "4", "5", "6", "7", "8", "9" };
+ 
+ static const Rule rules[] = {
+-	/* class      instance    title       tags mask     isfloating   monitor */
+-	{ "Gimp",     NULL,       NULL,       0,            True,        -1 },
+-	{ "Firefox",  NULL,       NULL,       1 << 8,       False,       -1 },
++	/* class          instance    title       tags mask     isfloating   monitor */
++	{ "Gimp",         NULL,       NULL,       0,            True,        -1 },
++	{ "Pidgin",       NULL,       NULL,       1 << 3,       False,       -1 },
++	{ "VirtualBox",   NULL,       NULL,       1 << 8,       False,       -1 },
+ };
+ 
++
+ /* layout(s) */
+-static const float mfact      = 0.55; /* factor of master area size [0.05..0.95] */
+-static const Bool resizehints = True; /* True means respect size hints in tiled resizals */
++static const float mfact      = 0.50; /* factor of master area size [0.05..0.95] */
++static const int nmaster      = 1;    /* number of clients in master area */
++static const Bool resizehints = False; /* True means respect size hints in tiled resizals */
++
++#include "includes/dwm-applet.c"
++#include "includes/gaplessgrid.c"
++#include "includes/smartborders.c"
++
++static void
++smartgrid(Monitor *m) {
++    smartborders(m, gaplessgrid);
++}
+ 
+ static const Layout layouts[] = {
+ 	/* symbol     arrange function */
+-	{ "[]=",      tile },    /* first entry is default */
+-	{ "><>",      NULL },    /* no layout function means floating behavior */
+-	{ "[M]",      monocle },
++	{ "Tiled",    smarttile },  /* first entry is default */
++	{ "Grid",     smartgrid },  /* smart grid */
++	{ "Full",     monocle },
++	{ "Float",    NULL },       /* no layout function means floating behavior */
+ };
+ 
++#include "includes/cycle.c"
++#include "includes/layoutcycle.c"
++#include "includes/push.c"
++
+ /* key definitions */
+-#define MODKEY Mod1Mask
++#define MODKEY Mod4Mask
+ #define TAGKEYS(KEY,TAG) \
+ 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
+ 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
+@@ -45,32 +62,28 @@
+ #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+ 
+ /* commands */
+-static const char *dmenucmd[] = { "dmenu_run", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
+-static const char *termcmd[]  = { "uxterm", NULL };
++static const char *dmenucmd[] = { "dmenu_run", "-b", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
++static const char *termcmd[]  = { "urxvtc", NULL };
++static const char *logoutcmd[]= { "gnome-session-quit", "--logout", NULL };
+ 
+ static Key keys[] = {
+ 	/* modifier                     key        function        argument */
+ 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+ 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+ 	{ MODKEY,                       XK_b,      togglebar,      {0} },
+-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
+-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
++    { MODKEY,                       XK_j,      focusstack,     {.i = +1} },
++    { MODKEY,                       XK_k,      focusstack,     {.i = -1} },
++	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.02} },
++	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.02} },
+ 	{ MODKEY,                       XK_Return, zoom,           {0} },
+ 	{ MODKEY,                       XK_Tab,    view,           {0} },
+ 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+ 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
+ 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
+ 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
+-	{ MODKEY,                       XK_space,  setlayout,      {0} },
+-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
++	{ MODKEY,                       XK_space,  layoutcycle,    {.i  = +1} },
+ 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
+ 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
+-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
+-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)
+@@ -80,7 +93,14 @@
+ 	TAGKEYS(                        XK_7,                      6)
+ 	TAGKEYS(                        XK_8,                      7)
+ 	TAGKEYS(                        XK_9,                      8)
+-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
++
++	{ MODKEY,                       XK_period, cycle,          {.i = +1} },
++	{ MODKEY,                       XK_comma,  cycle,          {.i = -1} },
++	{ MODKEY|ShiftMask,             XK_period, tagcycle,       {.i = +1} },
++	{ MODKEY|ShiftMask,             XK_comma,  tagcycle,       {.i = -1} },
++    { MODKEY|ShiftMask,             XK_q,      spawn,          {.v = logoutcmd } },
++    { MODKEY|ShiftMask,             XK_j,      pushdown,       {0} },
++    { MODKEY|ShiftMask,             XK_k,      pushup,         {0} },
+ };
+ 
+ /* button definitions */
+diff -r 50059a53790d includes/cycle.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/includes/cycle.c	Mon Nov 28 15:33:27 2011 -0800
+@@ -0,0 +1,42 @@
++
++static int
++shifttag(int dist)
++{
++    int i, curtags;
++    int seltag = 0;
++    int numtags = LENGTH(tags);
++
++    curtags = selmon->tagset[selmon->seltags];
++    for(i = 0; i < LENGTH(tags); i++) {
++        if((curtags & (1 << i)) != 0) {
++            seltag = i;
++            break;
++        }
++    }
++
++    seltag += dist;
++    if(seltag < 0)
++        seltag = numtags - (-seltag) % numtags;
++    else
++        seltag %= numtags;
++
++    return 1 << seltag;
++}
++
++static void
++cycle(const Arg *arg)
++{
++    const Arg a = { .i = shifttag(arg->i) };
++    view(&a);
++}
++
++static void
++tagcycle(const Arg *arg)
++{
++    const Arg a = { .i = shifttag(arg->i) };
++    tag(&a);
++    view(&a);
++}
++
++
++
+diff -r 50059a53790d includes/dwm-applet.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/includes/dwm-applet.c	Mon Nov 28 15:33:27 2011 -0800
+@@ -0,0 +1,166 @@
++
++#include <dbus/dbus.h>
++
++#define APPLET_INIT dwmapplet_init
++#define APPLET_DRAW dwmapplet_draw
++#define APPLET_CLEANUP dwmapplet_destroy
++
++#define MSG_SIZE 512
++
++static DBusError err;
++static DBusConnection* conn;
++
++static void get_well_known_name() {
++    DBusMessage* msg;
++    DBusPendingCall* pending;
++    DBusMessageIter args;
++    dbus_uint32_t ret = 0;
++
++    const char *name = "org.xmonad.Log";
++    dbus_uint32_t word = 5;
++
++    msg = dbus_message_new_method_call("org.freedesktop.DBus",
++         "/org/freedesktop/DBus",
++         "org.freedesktop.DBus",
++         "RequestName");
++    if (NULL == msg) { 
++        fprintf(stderr, "Message Null\n");
++        exit(1);
++    }
++
++    dbus_message_append_args(msg, 
++            DBUS_TYPE_STRING, &name, 
++            DBUS_TYPE_UINT32, &word, 
++            DBUS_TYPE_INVALID);
++
++    if (!dbus_connection_send_with_reply (conn, msg, &pending, -1)) {
++        fprintf(stderr, "Error when sending RequestName"); 
++        exit(1);
++    }
++
++    dbus_message_unref(msg);
++
++    if (NULL == pending) { 
++        fprintf(stderr, "Pending Call Null\n"); 
++        exit(1); 
++    }
++
++    dbus_pending_call_block(pending);
++   
++    msg = dbus_pending_call_steal_reply(pending);
++    if (NULL == msg) {
++        fprintf(stderr, "Reply Null\n"); 
++        exit(1); 
++    }
++    dbus_pending_call_unref(pending);
++
++    if (!dbus_message_iter_init(msg, &args))
++        fprintf(stderr, "No args\n");
++    else if (DBUS_TYPE_UINT32 != dbus_message_iter_get_arg_type(&args))
++        fprintf(stderr, "Arg is not an int\n");
++    else
++        dbus_message_iter_get_basic(&args, &ret);
++
++    printf("%d\n", ret);
++
++    dbus_connection_flush(conn);
++    dbus_message_unref(msg);
++}
++
++static void applet_update(const char *updateStr) {
++    DBusMessage *msg;
++    dbus_uint32_t serial = 0;
++
++    msg = dbus_message_new_signal("/org/xmonad/Log",
++        "org.xmonad.Log",
++        "Update");
++    if (NULL == msg) { 
++        fprintf(stderr, "Message Null\n"); 
++        exit(1); 
++    }
++
++    dbus_message_append_args(msg, DBUS_TYPE_STRING, &updateStr, DBUS_TYPE_INVALID);
++    if (!dbus_connection_send(conn, msg, &serial)) { 
++        fprintf(stderr, "Out Of Memory!\n"); 
++        exit(1);
++    }
++    dbus_connection_flush(conn);
++    dbus_message_unref(msg);
++}
++
++static void
++dwmapplet_init() 
++{
++    if (NULL == conn) {
++        dbus_error_init(&err);
++
++        conn = dbus_bus_get(DBUS_BUS_SESSION, &err);
++        if (dbus_error_is_set(&err)) { 
++            fprintf(stderr, "Connection Error (%s)\n", err.message); 
++            dbus_error_free(&err); 
++        }
++        if (NULL == conn) { 
++            exit(1); 
++        }
++        get_well_known_name(); 
++    }
++}
++
++static void
++dwmapplet_draw (Monitor *mon)
++{
++	Monitor *m;
++    Client *c;
++	unsigned int i, occ = 0, urg = 0, curtags;
++    char msg[MSG_SIZE];
++    memset(msg, 0, MSG_SIZE);
++
++    dwmapplet_init();
++
++	for(m = mons; m; m = m->next)
++		drawbar(m);
++
++	for(c = selmon->clients; c; c = c->next) {
++		occ |= c->tags;
++		if(c->isurgent)
++			urg |= c->tags;
++	}
++
++    curtags = selmon->tagset[selmon->seltags];
++
++	for(i = 0; i < LENGTH(tags); i++) {
++		if (curtags & 1 << i) {
++            strncat(msg, "<span foreground=\"#FFFFFF\">[", MSG_SIZE - strlen(msg));
++            strncat(msg, tags[i], MSG_SIZE - strlen(msg));
++            strncat(msg, "]</span>", MSG_SIZE - strlen(msg));
++        } else {
++            strncat(msg, "<span foreground=\"#999999\">", 
++                    MSG_SIZE - strlen(msg));
++            if (occ & 1 << i) 
++                strncat(msg, "(", MSG_SIZE - strlen(msg));
++            strncat(msg, tags[i], MSG_SIZE - strlen(msg));
++            if (occ & 1 << i) 
++                strncat(msg, ")", MSG_SIZE - strlen(msg));
++            strncat(msg, "</span>", MSG_SIZE - strlen(msg));
++        }
++        strncat(msg, " ", MSG_SIZE - strlen(msg));
++	}
++    strncat(msg, "- ", MSG_SIZE - strlen(msg));
++
++    if(selmon->ltsymbol) {
++        strncat(msg, selmon->ltsymbol, MSG_SIZE - strlen(msg));
++    }
++
++    if(selmon->sel != NULL && selmon->sel->name != NULL) {
++        strncat(msg, " - ", MSG_SIZE - strlen(msg));
++        strncat(msg, selmon->sel->name, MSG_SIZE - strlen(msg));
++    }
++    applet_update(msg);
++}
++
++static void
++dwmapplet_destroy() {
++    dbus_error_free(&err); 
++    dbus_connection_unref(conn);
++}
++
+diff -r 50059a53790d includes/gaplessgrid.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/includes/gaplessgrid.c	Mon Nov 28 15:33:27 2011 -0800
+@@ -0,0 +1,36 @@
++void
++gaplessgrid(Monitor *m) {
++	unsigned int n, cols, rows, cn, rn, i, cx, cy, cw, ch;
++	Client *c;
++
++	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next))
++		n++;
++	if(n == 0)
++		return;
++
++	/* grid dimensions */
++	for(cols = 0; cols <= n/2; cols++)
++		if(cols*cols >= n)
++			break;
++	if(n == 5) /* set layout against the general calculation: not 1:2:2, but 2:3 */
++		cols = 2;
++	rows = n/cols;
++
++	/* window geometries */
++	cw = cols ? m->ww / cols : m->ww;
++	cn = 0; /* current column number */
++	rn = 0; /* current row number */
++	for(i = 0, c = nexttiled(m->clients); c; i++, c = nexttiled(c->next)) {
++		if(i/rows + 1 > cols - n%cols)
++			rows = n/cols + 1;
++		ch = rows ? m->wh / rows : m->wh;
++		cx = m->wx + cn*cw;
++		cy = m->wy + rn*ch;
++		resize(c, cx, cy, cw - 2 * c->bw, ch - 2 * c->bw, False);
++		rn++;
++		if(rn >= rows) {
++			rn = 0;
++			cn++;
++		}
++	}
++}
+diff -r 50059a53790d includes/layoutcycle.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/includes/layoutcycle.c	Mon Nov 28 15:33:27 2011 -0800
+@@ -0,0 +1,19 @@
++
++static void
++layoutcycle(const Arg *arg) {
++    int i, lt = 0;
++
++    if (!arg || !arg->i) {
++        return;
++    }
++    for (i = 0; i < LENGTH(layouts); ++i) {
++        if (selmon->lt[selmon->sellt] == &layouts[i]) {
++            lt = i;
++            break;
++        }
++    }
++    lt = (lt + arg->i) % LENGTH(layouts);
++
++    const Arg a = { .v = &layouts[lt] };
++    setlayout(&a);
++}
+diff -r 50059a53790d includes/push.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/includes/push.c	Mon Nov 28 15:33:27 2011 -0800
+@@ -0,0 +1,58 @@
++static Client *
++prevtiled(Client *c) {
++	Client *p, *r;
++
++	for(p = selmon->clients, r = NULL; p && p != c; p = p->next)
++		if(!p->isfloating && ISVISIBLE(p))
++			r = p;
++	return r;
++}
++
++static void
++pushup(const Arg *arg) {
++	Client *sel = selmon->sel;
++	Client *c;
++
++	if(!sel || sel->isfloating)
++		return;
++	if((c = prevtiled(sel))) {
++		/* attach before c */
++		detach(sel);
++		sel->next = c;
++		if(selmon->clients == c)
++			selmon->clients = sel;
++		else {
++			for(c = selmon->clients; c->next != sel->next; c = c->next);
++			c->next = sel;
++		}
++	} else {
++		/* move to the end */
++		for(c = sel; c->next; c = c->next);
++		detach(sel);
++		sel->next = NULL;
++		c->next = sel;
++	}
++	focus(sel);
++	arrange(selmon);
++}
++
++static void
++pushdown(const Arg *arg) {
++	Client *sel = selmon->sel;
++	Client *c;
++
++	if(!sel || sel->isfloating)
++		return;
++	if((c = nexttiled(sel->next))) {
++		/* attach after c */
++		detach(sel);
++		sel->next = c->next;
++		c->next = sel;
++	} else {
++		/* move to the front */
++		detach(sel);
++		attach(sel);
++	}
++	focus(sel);
++	arrange(selmon);
++}
+diff -r 50059a53790d includes/smartborders.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/includes/smartborders.c	Mon Nov 28 15:33:27 2011 -0800
+@@ -0,0 +1,30 @@
++
++
++static void
++smartborders(Monitor *m, void (*arrange)(Monitor *m)) {
++	unsigned int n;
++	Client *c;
++
++	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
++    if (n == 0) {
++        return;
++    }
++    else if (n == 1) {
++        /* master */
++        c = nexttiled(m->clients);
++        c->bw = 0;
++    }
++    else {
++        for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
++            c->bw = borderpx;
++        }
++    }
++
++    arrange(m);
++}
++
++static void
++smarttile(Monitor *m) {
++    smartborders(m, tile);
++}
++
