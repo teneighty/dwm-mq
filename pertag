@@ -1,9 +1,9 @@
 # HG changeset patch
-# Parent 08b37a64b21af0f7bf4b22440565e922b1f0902b
+# Parent 15401baac4fde2b84f1ad0ca2a0ff191a269ae44
 
-diff -r 08b37a64b21a dwm.c
---- a/dwm.c	Mon Nov 28 15:27:43 2011 -0800
-+++ b/dwm.c	Mon Nov 28 15:29:06 2011 -0800
+diff -r 15401baac4fd dwm.c
+--- a/dwm.c	Mon Nov 28 15:30:13 2011 -0800
++++ b/dwm.c	Mon Nov 28 15:30:28 2011 -0800
 @@ -141,6 +141,11 @@
  	Monitor *next;
  	Window barwin;
