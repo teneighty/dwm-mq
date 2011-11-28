@@ -3,7 +3,7 @@
 
 diff -r 08b37a64b21a dwm.c
 --- a/dwm.c	Mon Nov 28 15:27:43 2011 -0800
-+++ b/dwm.c	Mon Nov 28 15:28:21 2011 -0800
++++ b/dwm.c	Mon Nov 28 15:29:06 2011 -0800
 @@ -141,6 +141,11 @@
  	Monitor *next;
  	Window barwin;
