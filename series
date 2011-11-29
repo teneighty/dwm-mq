@@ -1,7 +1,7 @@
 install_location
 configh_dep
-ignoredocks
+ignoredocks #+work
 pertag
 attachabove
 warp
-my_config
+my_config #+work
