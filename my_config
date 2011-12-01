@@ -1,9 +1,9 @@
 # HG changeset patch
-# Parent d3ecc16fed04d3d74ecf128570242b30f6e677e9
+# Parent 5ba35ef3dee1ffa9b0f3f5df254fbad6fade5331
 
-diff -r d3ecc16fed04 config.def.h
---- a/config.def.h	Tue Nov 29 08:20:27 2011 -0800
-+++ b/config.def.h	Tue Nov 29 12:48:59 2011 -0800
+diff -r 5ba35ef3dee1 config.def.h
+--- a/config.def.h	Thu Dec 01 11:59:37 2011 -0800
++++ b/config.def.h	Thu Dec 01 12:02:41 2011 -0800
 @@ -2,39 +2,56 @@
  
  /* appearance */
@@ -38,7 +38,7 @@ diff -r d3ecc16fed04 config.def.h
 +	/* class          instance    title       tags mask     isfloating   monitor */
 +	{ "Gimp",         NULL,       NULL,       0,            True,        -1 },
 +	{ "Pidgin",       NULL,       NULL,       1 << 3,       False,       -1 },
-+	{ "VirtualBox",   NULL,       NULL,       1 << 8,       False,       -1 },
++	{ "VirtualBox",   NULL,       NULL,       1 << 8,       True,        -1 },
  };
  
 +
@@ -136,9 +136,9 @@ diff -r d3ecc16fed04 config.def.h
  };
  
  /* button definitions */
-diff -r d3ecc16fed04 config.mk
---- a/config.mk	Tue Nov 29 08:20:27 2011 -0800
-+++ b/config.mk	Tue Nov 29 12:48:59 2011 -0800
+diff -r 5ba35ef3dee1 config.mk
+--- a/config.mk	Thu Dec 01 11:59:37 2011 -0800
++++ b/config.mk	Thu Dec 01 12:02:41 2011 -0800
 @@ -21,10 +21,13 @@
  # flags
  CPPFLAGS = -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
@@ -154,9 +154,9 @@ diff -r d3ecc16fed04 config.mk
  # Solaris
  #CFLAGS = -fast ${INCS} -DVERSION=\"${VERSION}\"
  #LDFLAGS = ${LIBS}
-diff -r d3ecc16fed04 includes/cycle.c
+diff -r 5ba35ef3dee1 includes/cycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/cycle.c	Tue Nov 29 12:48:59 2011 -0800
++++ b/includes/cycle.c	Thu Dec 01 12:02:41 2011 -0800
 @@ -0,0 +1,42 @@
 +
 +static int
@@ -200,10 +200,10 @@ diff -r d3ecc16fed04 includes/cycle.c
 +
 +
 +
-diff -r d3ecc16fed04 includes/dwm-applet.c
+diff -r 5ba35ef3dee1 includes/dwm-applet.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/dwm-applet.c	Tue Nov 29 12:48:59 2011 -0800
-@@ -0,0 +1,166 @@
++++ b/includes/dwm-applet.c	Thu Dec 01 12:02:41 2011 -0800
+@@ -0,0 +1,167 @@
 +
 +#include <dbus/dbus.h>
 +
@@ -336,12 +336,13 @@ diff -r d3ecc16fed04 includes/dwm-applet.c
 +
 +	for(i = 0; i < LENGTH(tags); i++) {
 +		if (curtags & 1 << i) {
-+            strncat(msg, "<span foreground=\"#FFFFFF\">[", MSG_SIZE - strlen(msg) - 1);
++            strncat(msg, "<span foreground=\"#FFFFFF\">[", 
++                    MSG_SIZE - strlen(msg) - 1);
 +            strncat(msg, tags[i], MSG_SIZE - strlen(msg) - 1);
 +            strncat(msg, "]</span>", MSG_SIZE - strlen(msg) - 1);
 +        } else {
 +            strncat(msg, "<span foreground=\"#999999\">", 
-+                    MSG_SIZE - strlen(msg));
++                    MSG_SIZE - strlen(msg) - 1);
 +            if (occ & 1 << i) 
 +                strncat(msg, "(", MSG_SIZE - strlen(msg) - 1);
 +            strncat(msg, tags[i], MSG_SIZE - strlen(msg) - 1);
@@ -370,9 +371,9 @@ diff -r d3ecc16fed04 includes/dwm-applet.c
 +    dbus_connection_unref(conn);
 +}
 +
-diff -r d3ecc16fed04 includes/gaplessgrid.c
+diff -r 5ba35ef3dee1 includes/gaplessgrid.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/gaplessgrid.c	Tue Nov 29 12:48:59 2011 -0800
++++ b/includes/gaplessgrid.c	Thu Dec 01 12:02:41 2011 -0800
 @@ -0,0 +1,36 @@
 +void
 +gaplessgrid(Monitor *m) {
@@ -410,9 +411,9 @@ diff -r d3ecc16fed04 includes/gaplessgrid.c
 +		}
 +	}
 +}
-diff -r d3ecc16fed04 includes/layoutcycle.c
+diff -r 5ba35ef3dee1 includes/layoutcycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/layoutcycle.c	Tue Nov 29 12:48:59 2011 -0800
++++ b/includes/layoutcycle.c	Thu Dec 01 12:02:41 2011 -0800
 @@ -0,0 +1,19 @@
 +
 +static void
@@ -433,9 +434,9 @@ diff -r d3ecc16fed04 includes/layoutcycle.c
 +    const Arg a = { .v = &layouts[lt] };
 +    setlayout(&a);
 +}
-diff -r d3ecc16fed04 includes/push.c
+diff -r 5ba35ef3dee1 includes/push.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/push.c	Tue Nov 29 12:48:59 2011 -0800
++++ b/includes/push.c	Thu Dec 01 12:02:41 2011 -0800
 @@ -0,0 +1,58 @@
 +static Client *
 +prevtiled(Client *c) {
@@ -495,9 +496,9 @@ diff -r d3ecc16fed04 includes/push.c
 +	focus(sel);
 +	arrange(selmon);
 +}
-diff -r d3ecc16fed04 includes/smartborders.c
+diff -r 5ba35ef3dee1 includes/smartborders.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/smartborders.c	Tue Nov 29 12:48:59 2011 -0800
++++ b/includes/smartborders.c	Thu Dec 01 12:02:41 2011 -0800
 @@ -0,0 +1,30 @@
 +
 +
