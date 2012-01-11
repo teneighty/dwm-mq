@@ -1,15 +1,15 @@
 # HG changeset patch
-# Parent dd74622a4785e55658b05b36834fa0c41084a8c1
+# Parent 799b04b3aebf3ae266123fe23160b5bae3ee4d14
 
-diff -r dd74622a4785 config.mk
---- a/config.mk	Sun Jul 10 21:24:17 2011 +0100
-+++ b/config.mk	Thu Dec 01 11:59:24 2011 -0800
+diff -r 799b04b3aebf config.mk
+--- a/config.mk	Wed Jan 11 09:37:54 2012 -0800
++++ b/config.mk	Wed Jan 11 09:38:56 2012 -0800
 @@ -4,7 +4,7 @@
  # Customize below to fit your system
  
  # paths
 -PREFIX = /usr/local
-+PREFIX = /home/thorton/local/packages/dwm
++PREFIX = ${HOME}/local/packages/dwm
  MANPREFIX = ${PREFIX}/share/man
  
  X11INC = /usr/X11R6/include
