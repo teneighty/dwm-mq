@@ -1,0 +1,12 @@
+# HG changeset patch
+# Parent ec4baab783145b2e9304f436795dc4b02abc5349
+
+diff -r ec4baab78314 .hgignore
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/.hgignore	Wed Jan 11 09:32:54 2012 -0800
+@@ -0,0 +1,5 @@
++syntax: glob
++
++dwm
++config.h
++*.o
