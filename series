@@ -1,5 +1,6 @@
 install_location
 configh_dep
+pertag
 ignoredocks #+work
 attachabove
 warp
