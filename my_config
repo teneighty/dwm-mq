@@ -3,7 +3,7 @@
 
 diff -r 5ba35ef3dee1 config.def.h
 --- a/config.def.h	Thu Dec 01 11:59:37 2011 -0800
-+++ b/config.def.h	Thu Dec 01 12:02:41 2011 -0800
++++ b/config.def.h	Fri Dec 02 09:08:02 2011 -0800
 @@ -2,39 +2,56 @@
  
  /* appearance */
@@ -55,7 +55,7 @@ diff -r 5ba35ef3dee1 config.def.h
 +
 +static void
 +smartgrid(Monitor *m) {
-+    smartborders(m, gaplessgrid);
++	smartborders(m, gaplessgrid);
 +}
  
  static const Layout layouts[] = {
@@ -98,8 +98,8 @@ diff -r 5ba35ef3dee1 config.def.h
 -	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 -	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 -	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-+    { MODKEY,                       XK_j,      focusstack,     {.i = +1} },
-+    { MODKEY,                       XK_k,      focusstack,     {.i = -1} },
++	{ MODKEY,                       XK_j,      focusstack,     {.i = +1} },
++	{ MODKEY,                       XK_k,      focusstack,     {.i = -1} },
 +	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.02} },
 +	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.02} },
  	{ MODKEY,                       XK_Return, zoom,           {0} },
@@ -130,15 +130,20 @@ diff -r 5ba35ef3dee1 config.def.h
 +	{ MODKEY,                       XK_comma,  cycle,          {.i = -1} },
 +	{ MODKEY|ShiftMask,             XK_period, tagcycle,       {.i = +1} },
 +	{ MODKEY|ShiftMask,             XK_comma,  tagcycle,       {.i = -1} },
-+    { MODKEY|ShiftMask,             XK_q,      spawn,          {.v = logoutcmd } },
-+    { MODKEY|ShiftMask,             XK_j,      pushdown,       {0} },
-+    { MODKEY|ShiftMask,             XK_k,      pushup,         {0} },
++	{ MODKEY|ShiftMask,             XK_q,      spawn,          {.v = logoutcmd } },
++	{ MODKEY|ShiftMask,             XK_j,      pushdown,       {0} },
++	{ MODKEY|ShiftMask,             XK_k,      pushup,         {0} },
  };
  
  /* button definitions */
+@@ -99,4 +119,3 @@
+ 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
+ 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+ };
+-
 diff -r 5ba35ef3dee1 config.mk
 --- a/config.mk	Thu Dec 01 11:59:37 2011 -0800
-+++ b/config.mk	Thu Dec 01 12:02:41 2011 -0800
++++ b/config.mk	Fri Dec 02 09:08:02 2011 -0800
 @@ -21,10 +21,13 @@
  # flags
  CPPFLAGS = -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
@@ -156,7 +161,7 @@ diff -r 5ba35ef3dee1 config.mk
  #LDFLAGS = ${LIBS}
 diff -r 5ba35ef3dee1 includes/cycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/cycle.c	Thu Dec 01 12:02:41 2011 -0800
++++ b/includes/cycle.c	Fri Dec 02 09:08:02 2011 -0800
 @@ -0,0 +1,42 @@
 +
 +static int
@@ -202,7 +207,7 @@ diff -r 5ba35ef3dee1 includes/cycle.c
 +
 diff -r 5ba35ef3dee1 includes/dwm-applet.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/dwm-applet.c	Thu Dec 01 12:02:41 2011 -0800
++++ b/includes/dwm-applet.c	Fri Dec 02 09:08:02 2011 -0800
 @@ -0,0 +1,167 @@
 +
 +#include <dbus/dbus.h>
@@ -373,7 +378,7 @@ diff -r 5ba35ef3dee1 includes/dwm-applet.c
 +
 diff -r 5ba35ef3dee1 includes/gaplessgrid.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/gaplessgrid.c	Thu Dec 01 12:02:41 2011 -0800
++++ b/includes/gaplessgrid.c	Fri Dec 02 09:08:02 2011 -0800
 @@ -0,0 +1,36 @@
 +void
 +gaplessgrid(Monitor *m) {
@@ -413,7 +418,7 @@ diff -r 5ba35ef3dee1 includes/gaplessgrid.c
 +}
 diff -r 5ba35ef3dee1 includes/layoutcycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/layoutcycle.c	Thu Dec 01 12:02:41 2011 -0800
++++ b/includes/layoutcycle.c	Fri Dec 02 09:08:02 2011 -0800
 @@ -0,0 +1,19 @@
 +
 +static void
@@ -436,7 +441,7 @@ diff -r 5ba35ef3dee1 includes/layoutcycle.c
 +}
 diff -r 5ba35ef3dee1 includes/push.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/push.c	Thu Dec 01 12:02:41 2011 -0800
++++ b/includes/push.c	Fri Dec 02 09:08:02 2011 -0800
 @@ -0,0 +1,58 @@
 +static Client *
 +prevtiled(Client *c) {
@@ -498,7 +503,7 @@ diff -r 5ba35ef3dee1 includes/push.c
 +}
 diff -r 5ba35ef3dee1 includes/smartborders.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/smartborders.c	Thu Dec 01 12:02:41 2011 -0800
++++ b/includes/smartborders.c	Fri Dec 02 09:08:02 2011 -0800
 @@ -0,0 +1,30 @@
 +
 +
