@@ -1,25 +1,11 @@
 # HG changeset patch
-# Parent 5ba35ef3dee1ffa9b0f3f5df254fbad6fade5331
+# Parent c22a246a64d31b7fbafc70e39b07edf447bf7189
 
-diff -r 5ba35ef3dee1 config.def.h
---- a/config.def.h	Thu Dec 01 11:59:37 2011 -0800
-+++ b/config.def.h	Fri Dec 02 09:08:02 2011 -0800
-@@ -2,39 +2,56 @@
- 
- /* appearance */
- static const char font[]            = "-*-terminus-medium-r-*-*-16-*-*-*-*-*-*-*";
--static const char normbordercolor[] = "#cccccc";
--static const char normbgcolor[]     = "#cccccc";
--static const char normfgcolor[]     = "#000000";
--static const char selbordercolor[]  = "#0066ff";
--static const char selbgcolor[]      = "#0066ff";
--static const char selfgcolor[]      = "#ffffff";
-+static const char normbordercolor[] = "#444444";
-+static const char normbgcolor[]     = "#222222";
-+static const char normfgcolor[]     = "#bbbbbb";
-+static const char selbordercolor[]  = "#005577";
-+static const char selbgcolor[]      = "#005577";
-+static const char selfgcolor[]      = "#eeeeee";
+diff -r c22a246a64d3 config.def.h
+--- a/config.def.h	Tue Jan 10 18:42:08 2012 -0800
++++ b/config.def.h	Tue Jan 10 18:51:08 2012 -0800
+@@ -10,32 +10,45 @@
+ static const char selfgcolor[]      = "#eeeeee";
  static const unsigned int borderpx  = 1;        /* border pixel of windows */
  static const unsigned int snap      = 32;       /* snap pixel */
 -static const Bool showbar           = True;     /* False means no bar */
@@ -32,23 +18,23 @@ diff -r 5ba35ef3dee1 config.def.h
 +static const char *tags[] = { "home", "web", "dev", "4", "5", "6", "7", "8", "9" };
  
  static const Rule rules[] = {
--	/* class      instance    title       tags mask     isfloating   monitor */
+ 	/* class      instance    title       tags mask     isfloating   monitor */
 -	{ "Gimp",     NULL,       NULL,       0,            True,        -1 },
 -	{ "Firefox",  NULL,       NULL,       1 << 8,       False,       -1 },
-+	/* class          instance    title       tags mask     isfloating   monitor */
 +	{ "Gimp",         NULL,       NULL,       0,            True,        -1 },
 +	{ "Pidgin",       NULL,       NULL,       1 << 3,       False,       -1 },
 +	{ "VirtualBox",   NULL,       NULL,       1 << 8,       True,        -1 },
  };
  
-+
  /* layout(s) */
 -static const float mfact      = 0.55; /* factor of master area size [0.05..0.95] */
--static const Bool resizehints = True; /* True means respect size hints in tiled resizals */
 +static const float mfact      = 0.50; /* factor of master area size [0.05..0.95] */
-+static const int nmaster      = 1;    /* number of clients in master area */
+ static const int nmaster      = 1;    /* number of clients in master area */
+-static const Bool resizehints = True; /* True means respect size hints in tiled resizals */
 +static const Bool resizehints = False; /* True means respect size hints in tiled resizals */
 +
++#include "includes/cycle.c"
++#include "includes/push.c"
 +#include "includes/dwm-applet.c"
 +#include "includes/gaplessgrid.c"
 +#include "includes/smartborders.c"
@@ -69,17 +55,13 @@ diff -r 5ba35ef3dee1 config.def.h
 +	{ "Float",    NULL },       /* no layout function means floating behavior */
  };
  
-+#include "includes/cycle.c"
-+#include "includes/layoutcycle.c"
-+#include "includes/push.c"
-+
  /* key definitions */
 -#define MODKEY Mod1Mask
 +#define MODKEY Mod4Mask
  #define TAGKEYS(KEY,TAG) \
  	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -45,32 +62,28 @@
+@@ -46,16 +59,19 @@
  #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
  
  /* commands */
@@ -96,21 +78,22 @@ diff -r 5ba35ef3dee1 config.def.h
  	{ MODKEY,                       XK_b,      togglebar,      {0} },
 -	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 -	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
--	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
--	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 +	{ MODKEY,                       XK_j,      focusstack,     {.i = +1} },
 +	{ MODKEY,                       XK_k,      focusstack,     {.i = -1} },
 +	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.02} },
 +	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.02} },
- 	{ MODKEY,                       XK_Return, zoom,           {0} },
- 	{ MODKEY,                       XK_Tab,    view,           {0} },
- 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+ 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
+ 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+ 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+@@ -66,14 +82,11 @@
  	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
  	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
  	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 -	{ MODKEY,                       XK_space,  setlayout,      {0} },
 -	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-+	{ MODKEY,                       XK_space,  layoutcycle,    {.i  = +1} },
++	// { MODKEY,                       XK_space,  setlayout,      {0} },
++	// { MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
++	// { MODKEY,                       XK_space,  layoutcycle,    {.i  = +1} },
  	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
  	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 -	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
@@ -120,7 +103,7 @@ diff -r 5ba35ef3dee1 config.def.h
  	TAGKEYS(                        XK_1,                      0)
  	TAGKEYS(                        XK_2,                      1)
  	TAGKEYS(                        XK_3,                      2)
-@@ -80,7 +93,14 @@
+@@ -83,7 +96,14 @@
  	TAGKEYS(                        XK_7,                      6)
  	TAGKEYS(                        XK_8,                      7)
  	TAGKEYS(                        XK_9,                      8)
@@ -136,14 +119,14 @@ diff -r 5ba35ef3dee1 config.def.h
  };
  
  /* button definitions */
-@@ -99,4 +119,3 @@
+@@ -102,4 +122,3 @@
  	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
  	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
  };
 -
-diff -r 5ba35ef3dee1 config.mk
---- a/config.mk	Thu Dec 01 11:59:37 2011 -0800
-+++ b/config.mk	Fri Dec 02 09:08:02 2011 -0800
+diff -r c22a246a64d3 config.mk
+--- a/config.mk	Tue Jan 10 18:42:08 2012 -0800
++++ b/config.mk	Tue Jan 10 18:51:08 2012 -0800
 @@ -21,10 +21,13 @@
  # flags
  CPPFLAGS = -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
@@ -159,9 +142,9 @@ diff -r 5ba35ef3dee1 config.mk
  # Solaris
  #CFLAGS = -fast ${INCS} -DVERSION=\"${VERSION}\"
  #LDFLAGS = ${LIBS}
-diff -r 5ba35ef3dee1 includes/cycle.c
+diff -r c22a246a64d3 includes/cycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/cycle.c	Fri Dec 02 09:08:02 2011 -0800
++++ b/includes/cycle.c	Tue Jan 10 18:51:08 2012 -0800
 @@ -0,0 +1,42 @@
 +
 +static int
@@ -205,9 +188,9 @@ diff -r 5ba35ef3dee1 includes/cycle.c
 +
 +
 +
-diff -r 5ba35ef3dee1 includes/dwm-applet.c
+diff -r c22a246a64d3 includes/dwm-applet.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/dwm-applet.c	Fri Dec 02 09:08:02 2011 -0800
++++ b/includes/dwm-applet.c	Tue Jan 10 18:51:08 2012 -0800
 @@ -0,0 +1,167 @@
 +
 +#include <dbus/dbus.h>
@@ -376,9 +359,9 @@ diff -r 5ba35ef3dee1 includes/dwm-applet.c
 +    dbus_connection_unref(conn);
 +}
 +
-diff -r 5ba35ef3dee1 includes/gaplessgrid.c
+diff -r c22a246a64d3 includes/gaplessgrid.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/gaplessgrid.c	Fri Dec 02 09:08:02 2011 -0800
++++ b/includes/gaplessgrid.c	Tue Jan 10 18:51:08 2012 -0800
 @@ -0,0 +1,36 @@
 +void
 +gaplessgrid(Monitor *m) {
@@ -416,9 +399,9 @@ diff -r 5ba35ef3dee1 includes/gaplessgrid.c
 +		}
 +	}
 +}
-diff -r 5ba35ef3dee1 includes/layoutcycle.c
+diff -r c22a246a64d3 includes/layoutcycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/layoutcycle.c	Fri Dec 02 09:08:02 2011 -0800
++++ b/includes/layoutcycle.c	Tue Jan 10 18:51:08 2012 -0800
 @@ -0,0 +1,19 @@
 +
 +static void
@@ -439,9 +422,9 @@ diff -r 5ba35ef3dee1 includes/layoutcycle.c
 +    const Arg a = { .v = &layouts[lt] };
 +    setlayout(&a);
 +}
-diff -r 5ba35ef3dee1 includes/push.c
+diff -r c22a246a64d3 includes/push.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/push.c	Fri Dec 02 09:08:02 2011 -0800
++++ b/includes/push.c	Tue Jan 10 18:51:08 2012 -0800
 @@ -0,0 +1,58 @@
 +static Client *
 +prevtiled(Client *c) {
@@ -501,9 +484,9 @@ diff -r 5ba35ef3dee1 includes/push.c
 +	focus(sel);
 +	arrange(selmon);
 +}
-diff -r 5ba35ef3dee1 includes/smartborders.c
+diff -r c22a246a64d3 includes/smartborders.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/smartborders.c	Fri Dec 02 09:08:02 2011 -0800
++++ b/includes/smartborders.c	Tue Jan 10 18:51:08 2012 -0800
 @@ -0,0 +1,30 @@
 +
 +
