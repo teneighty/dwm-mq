@@ -3,7 +3,7 @@
 
 diff -r c22a246a64d3 config.def.h
 --- a/config.def.h	Tue Jan 10 18:42:08 2012 -0800
-+++ b/config.def.h	Tue Jan 10 18:51:08 2012 -0800
++++ b/config.def.h	Tue Jan 10 19:05:20 2012 -0800
 @@ -10,32 +10,45 @@
  static const char selfgcolor[]      = "#eeeeee";
  static const unsigned int borderpx  = 1;        /* border pixel of windows */
@@ -61,7 +61,7 @@ diff -r c22a246a64d3 config.def.h
  #define TAGKEYS(KEY,TAG) \
  	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -46,16 +59,19 @@
+@@ -46,34 +59,32 @@
  #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
  
  /* commands */
@@ -84,8 +84,11 @@ diff -r c22a246a64d3 config.def.h
 +	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.02} },
  	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
  	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
- 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-@@ -66,14 +82,11 @@
+-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+ 	{ MODKEY,                       XK_Return, zoom,           {0} },
+ 	{ MODKEY,                       XK_Tab,    view,           {0} },
+ 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
  	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
  	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
  	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
@@ -103,7 +106,7 @@ diff -r c22a246a64d3 config.def.h
  	TAGKEYS(                        XK_1,                      0)
  	TAGKEYS(                        XK_2,                      1)
  	TAGKEYS(                        XK_3,                      2)
-@@ -83,7 +96,14 @@
+@@ -83,7 +94,14 @@
  	TAGKEYS(                        XK_7,                      6)
  	TAGKEYS(                        XK_8,                      7)
  	TAGKEYS(                        XK_9,                      8)
@@ -119,14 +122,14 @@ diff -r c22a246a64d3 config.def.h
  };
  
  /* button definitions */
-@@ -102,4 +122,3 @@
+@@ -102,4 +120,3 @@
  	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
  	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
  };
 -
 diff -r c22a246a64d3 config.mk
 --- a/config.mk	Tue Jan 10 18:42:08 2012 -0800
-+++ b/config.mk	Tue Jan 10 18:51:08 2012 -0800
++++ b/config.mk	Tue Jan 10 19:05:20 2012 -0800
 @@ -21,10 +21,13 @@
  # flags
  CPPFLAGS = -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
@@ -144,7 +147,7 @@ diff -r c22a246a64d3 config.mk
  #LDFLAGS = ${LIBS}
 diff -r c22a246a64d3 includes/cycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/cycle.c	Tue Jan 10 18:51:08 2012 -0800
++++ b/includes/cycle.c	Tue Jan 10 19:05:20 2012 -0800
 @@ -0,0 +1,42 @@
 +
 +static int
@@ -190,7 +193,7 @@ diff -r c22a246a64d3 includes/cycle.c
 +
 diff -r c22a246a64d3 includes/dwm-applet.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/dwm-applet.c	Tue Jan 10 18:51:08 2012 -0800
++++ b/includes/dwm-applet.c	Tue Jan 10 19:05:20 2012 -0800
 @@ -0,0 +1,167 @@
 +
 +#include <dbus/dbus.h>
@@ -361,7 +364,7 @@ diff -r c22a246a64d3 includes/dwm-applet.c
 +
 diff -r c22a246a64d3 includes/gaplessgrid.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/gaplessgrid.c	Tue Jan 10 18:51:08 2012 -0800
++++ b/includes/gaplessgrid.c	Tue Jan 10 19:05:20 2012 -0800
 @@ -0,0 +1,36 @@
 +void
 +gaplessgrid(Monitor *m) {
@@ -401,7 +404,7 @@ diff -r c22a246a64d3 includes/gaplessgrid.c
 +}
 diff -r c22a246a64d3 includes/layoutcycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/layoutcycle.c	Tue Jan 10 18:51:08 2012 -0800
++++ b/includes/layoutcycle.c	Tue Jan 10 19:05:20 2012 -0800
 @@ -0,0 +1,19 @@
 +
 +static void
@@ -424,7 +427,7 @@ diff -r c22a246a64d3 includes/layoutcycle.c
 +}
 diff -r c22a246a64d3 includes/push.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/push.c	Tue Jan 10 18:51:08 2012 -0800
++++ b/includes/push.c	Tue Jan 10 19:05:20 2012 -0800
 @@ -0,0 +1,58 @@
 +static Client *
 +prevtiled(Client *c) {
@@ -486,7 +489,7 @@ diff -r c22a246a64d3 includes/push.c
 +}
 diff -r c22a246a64d3 includes/smartborders.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/smartborders.c	Tue Jan 10 18:51:08 2012 -0800
++++ b/includes/smartborders.c	Tue Jan 10 19:05:20 2012 -0800
 @@ -0,0 +1,30 @@
 +
 +
