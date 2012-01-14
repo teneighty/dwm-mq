@@ -1,10 +1,10 @@
 # HG changeset patch
-# Parent 85cfbf993fbddb489918fe140b8fdcbc48af9b64
+# Parent 5037250e892756046dc4c82dcc521d99a71bb640
 
-diff -r 85cfbf993fbd config.def.h
---- a/config.def.h	Wed Jan 11 08:43:57 2012 -0800
-+++ b/config.def.h	Wed Jan 11 08:57:05 2012 -0800
-@@ -10,32 +10,45 @@
+diff -r 5037250e8927 config.def.h
+--- a/config.def.h	Wed Jan 11 09:39:22 2012 -0800
++++ b/config.def.h	Fri Jan 13 20:50:14 2012 -0800
+@@ -10,32 +10,46 @@
  static const char selfgcolor[]      = "#eeeeee";
  static const unsigned int borderpx  = 1;        /* border pixel of windows */
  static const unsigned int snap      = 32;       /* snap pixel */
@@ -24,6 +24,7 @@ diff -r 85cfbf993fbd config.def.h
 +	{ "Gimp",         NULL,       NULL,       0,            True,        -1 },
 +	{ "Pidgin",       NULL,       NULL,       1 << 3,       False,       -1 },
 +	{ "VirtualBox",   NULL,       NULL,       1 << 8,       True,        -1 },
++	{ "QEMU",         NULL,       NULL,       1 << 9,       True,        -1 },
  };
  
  /* layout(s) */
@@ -61,7 +62,7 @@ diff -r 85cfbf993fbd config.def.h
  #define TAGKEYS(KEY,TAG) \
  	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -46,34 +59,32 @@
+@@ -46,34 +60,32 @@
  #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
  
  /* commands */
@@ -106,7 +107,7 @@ diff -r 85cfbf993fbd config.def.h
  	TAGKEYS(                        XK_1,                      0)
  	TAGKEYS(                        XK_2,                      1)
  	TAGKEYS(                        XK_3,                      2)
-@@ -83,7 +94,14 @@
+@@ -83,7 +95,14 @@
  	TAGKEYS(                        XK_7,                      6)
  	TAGKEYS(                        XK_8,                      7)
  	TAGKEYS(                        XK_9,                      8)
@@ -122,14 +123,14 @@ diff -r 85cfbf993fbd config.def.h
  };
  
  /* button definitions */
-@@ -102,4 +120,3 @@
+@@ -102,4 +121,3 @@
  	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
  	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
  };
 -
-diff -r 85cfbf993fbd config.mk
---- a/config.mk	Wed Jan 11 08:43:57 2012 -0800
-+++ b/config.mk	Wed Jan 11 08:57:05 2012 -0800
+diff -r 5037250e8927 config.mk
+--- a/config.mk	Wed Jan 11 09:39:22 2012 -0800
++++ b/config.mk	Fri Jan 13 20:50:14 2012 -0800
 @@ -21,10 +21,13 @@
  # flags
  CPPFLAGS = -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
@@ -145,9 +146,9 @@ diff -r 85cfbf993fbd config.mk
  # Solaris
  #CFLAGS = -fast ${INCS} -DVERSION=\"${VERSION}\"
  #LDFLAGS = ${LIBS}
-diff -r 85cfbf993fbd includes/cycle.c
+diff -r 5037250e8927 includes/cycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/cycle.c	Wed Jan 11 08:57:05 2012 -0800
++++ b/includes/cycle.c	Fri Jan 13 20:50:14 2012 -0800
 @@ -0,0 +1,42 @@
 +
 +static int
@@ -191,9 +192,9 @@ diff -r 85cfbf993fbd includes/cycle.c
 +
 +
 +
-diff -r 85cfbf993fbd includes/dwm-applet.c
+diff -r 5037250e8927 includes/dwm-applet.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/dwm-applet.c	Wed Jan 11 08:57:05 2012 -0800
++++ b/includes/dwm-applet.c	Fri Jan 13 20:50:14 2012 -0800
 @@ -0,0 +1,167 @@
 +
 +#include <dbus/dbus.h>
@@ -362,9 +363,9 @@ diff -r 85cfbf993fbd includes/dwm-applet.c
 +    dbus_connection_unref(conn);
 +}
 +
-diff -r 85cfbf993fbd includes/gaplessgrid.c
+diff -r 5037250e8927 includes/gaplessgrid.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/gaplessgrid.c	Wed Jan 11 08:57:05 2012 -0800
++++ b/includes/gaplessgrid.c	Fri Jan 13 20:50:14 2012 -0800
 @@ -0,0 +1,36 @@
 +void
 +gaplessgrid(Monitor *m) {
@@ -402,9 +403,9 @@ diff -r 85cfbf993fbd includes/gaplessgrid.c
 +		}
 +	}
 +}
-diff -r 85cfbf993fbd includes/layoutcycle.c
+diff -r 5037250e8927 includes/layoutcycle.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/layoutcycle.c	Wed Jan 11 08:57:05 2012 -0800
++++ b/includes/layoutcycle.c	Fri Jan 13 20:50:14 2012 -0800
 @@ -0,0 +1,19 @@
 +
 +static void
@@ -425,9 +426,9 @@ diff -r 85cfbf993fbd includes/layoutcycle.c
 +    const Arg a = { .v = &layouts[lt] };
 +    setlayout(&a);
 +}
-diff -r 85cfbf993fbd includes/push.c
+diff -r 5037250e8927 includes/push.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/push.c	Wed Jan 11 08:57:05 2012 -0800
++++ b/includes/push.c	Fri Jan 13 20:50:14 2012 -0800
 @@ -0,0 +1,58 @@
 +static Client *
 +prevtiled(Client *c) {
@@ -487,9 +488,9 @@ diff -r 85cfbf993fbd includes/push.c
 +	focus(sel);
 +	arrange(selmon);
 +}
-diff -r 85cfbf993fbd includes/smartborders.c
+diff -r 5037250e8927 includes/smartborders.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/includes/smartborders.c	Wed Jan 11 08:57:05 2012 -0800
++++ b/includes/smartborders.c	Fri Jan 13 20:50:14 2012 -0800
 @@ -0,0 +1,30 @@
 +
 +
